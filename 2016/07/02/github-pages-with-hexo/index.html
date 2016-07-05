@@ -202,7 +202,7 @@
 <li>部落格樣式要潮</li>
 <li>最好有 GA 和 SEO 的功能</li>
 </ol>
-<p>抽空研究了一下，發覺絕大多數還是受限於第一點 XD。由於 GitHub 只能幫我們代管靜態網頁，要做到<strong>寫完文章並一鍵發佈</strong>，我們需要一個部落格框架 <em>hexo</em>，把文章和網頁模版合併編成一個靜態網頁。此外，還需要使用 hexo 的套件 <em>hexo-math</em> 讓他在編成網頁的同時可以讀懂 mathjax 的語法，才能正確顯示數學符號。</p>
+<p>抽空研究了一下，發覺絕大多數還是受限於第一點 XD。由於 GitHub 只能幫我們代管靜態網頁，要做到<strong>寫完文章並一鍵發佈</strong>，我們需要一個部落格框架 <em>hexo</em>，把文章和網頁模版合併編成一個靜態網頁。此外，還需要使用 hexo 的套件 <em>hexo math</em> 讓他在編成網頁的同時可以讀懂 mathjax 的語法，才能正確顯示數學符號。</p>
 <hr>
 <h2 id="準備工作"><a href="#準備工作" class="headerlink" title="準備工作"></a>準備工作</h2><p>接下來的工作大部分會在 <code>Mac OSX</code> 的 <code>terminal</code> 底下進行設定</p>
 <h4 id="新增-github-repo"><a href="#新增-github-repo" class="headerlink" title="新增 github repo"></a>新增 github repo</h4><ol>
@@ -224,6 +224,8 @@
 <p>做完 config 的設定之後，整個部落格大概就有個雛形了。如果想要預覽一下的話，輸入</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">$ hexo server</div></pre></td></tr></table></figure>
 <p>然後到 <code>localhost:4000</code> 就可以看到調整後的結果。</p>
+<p>請注意由於hexo server 與hexo 是獨立的，所以下達<code>hexo server</code> 指令前，請先安裝<a href="https://github.com/hexojs/hexo-server" target="_blank" rel="external">hexo server</a>才能使用：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">$ npm install hexo-server --save</div></pre></td></tr></table></figure>
 <h4 id="寫文章"><a href="#寫文章" class="headerlink" title="寫文章"></a>寫文章</h4><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">$ hexo new post testpost</div></pre></td></tr></table></figure>
 <p>上述命令會在<code>hexo-theme-huxblog/source/_posts/</code> 下面新增：</p>
 <ul>

@@ -13,11 +13,11 @@
 
     <title>
         
-          About - Cyrus&#39; Blog
+          在 jupyter notebook 上安裝 vim 插件 - Cyrus&#39; Blog
         
     </title>
 
-    <link rel="canonical" href="http://cyruschiu.github.io/about/">
+    <link rel="canonical" href="http://cyruschiu.github.io/2016/09/05/jupyter-notebook-vim-binding/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -140,119 +140,176 @@
 
 
     <!-- Main Content -->
-    <!-- Page Header -->
-<header class="intro-header" style="background-image: url('/img/home-bg.jpg')">
+    
+<!-- Image to hack wechat -->
+<!-- <img src="http://cyruschiu.github.io/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="{{ site.baseurl }}/{% if page.header-img %}{{ page.header-img }}{% else %}{{ site.header-img }}{% endif %}" width="0" height="0"> -->
+
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/home-bg.jpg')
+    }
+</style>
+<header class="intro-header" >
     <div class="container">
         <div class="row">
-            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 ">
-                <div class="site-heading">
-                    <h1>About</h1>
-                    <!--<hr class="small">-->
-                    <span class="subheading"> </span>
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                          <a class="tag" href="/tags/#開發環境" title="開發環境">開發環境</a>
+                        
+                    </div>
+                    <h1>在 jupyter notebook 上安裝 vim 插件</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by Cyrus on
+                        2016-09-05
+                    </span>
                 </div>
             </div>
         </div>
     </div>
 </header>
 
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
 
-
-<!-- Main Content -->
-<div class="container">
-    <div class="row">
-        
-
-<!-- USE SIDEBAR -->
     <!-- Post Container -->
             <div class="
-                col-lg-8 col-lg-offset-1
-                col-md-8 col-md-offset-1
-                col-sm-12
-                col-xs-12
-                post-container
-            ">
-            
-                <p>hi</p>
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <p>這篇文章會提到：</p>
+<ul>
+<li>使用 vim 指令操作 jupyter notebook 的開發環境</li>
+</ul>
+<center><br><img src="jxv.jpg" alt="jupyterXvim" title="jupyterXvim"><br></center>
+
+
+
+<p>應該很多人都同意 <a href="http://jupyter.org/" target="_blank" rel="external">jupyter notebook</a> 是一個很方便的開發環境，特別是在整理資料、寫報告、教學，大概沒有比這個更方便的環境了吧！（有的話拜託跟我說一下）<br>一直以來覺得 jupyter notebook 的缺點就是操作起來不像 vim 一樣有很多方便的快速鍵可以用，常常需要滑鼠移來移去。趁著還有印象，就把在 jupyter notebook 上面安裝 vim 插件的方法記下來。</p>
+<h3 id="安裝-IPython-notebook-extensions"><a href="#安裝-IPython-notebook-extensions" class="headerlink" title="安裝 IPython-notebook-extensions"></a>安裝 IPython-notebook-extensions</h3><p>首先到<a href="https://github.com/ipython-contrib/jupyter_contrib_nbextensions#installation" target="_blank" rel="external">這邊</a>安裝 notebook 的擴充插件</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">$ pip install https://github.com/ipython-contrib/jupyter_contrib_nbextensions/tarball/master</div><div class="line">$ jupyter contrib nbextension install --user</div></pre></td></tr></table></figure>
+<h3 id="安裝-vim-binding"><a href="#安裝-vim-binding" class="headerlink" title="安裝 vim-binding"></a>安裝 vim-binding</h3><p>再來到<a href="https://github.com/lambdalisue/jupyter-vim-binding" target="_blank" rel="external">這邊</a>安裝 jupyter-vim-binding 插件</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line"># 在 ~/.local/share/jupyter/ 建立nbextensions資料夾</div><div class="line">$ mkdir -p $(jupyter --data-dir)/nbextensions</div><div class="line"># Clone the repo</div><div class="line">$ cd $(jupyter --data-dir)/nbextensions</div><div class="line">$ git clone https://github.com/lambdalisue/jupyter-vim-binding</div></pre></td></tr></table></figure>
+<p>之後可以下指令 <code>$ jupyter nbextension enable vim_binding/vim_binding</code> 或是到 <code>127.0.0.1:8888/nbextensions</code> 把它打勾就可以使用了<br><img src="vim-binding-setting.jpg" alt="vim-binding-setting" title="vim-binding-setting"></p>
+
+
+                <hr>
+
+                
+
+                <ul class="pager">
+                    
+                    
+                        <li class="next">
+                            <a href="/2016/07/02/github-pages-with-hexo/" data-toggle="tooltip" data-placement="top" title="Github + Hexo + MathJax 輕鬆建立技術部落格">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                
+
+                
+                <!-- disqus 评论框 start -->
+                <div class="comment">
+                    <div id="disqus_thread" class="disqus-thread"></div>
+                </div>
+                <!-- disqus 评论框 end -->
+                
 
             </div>
+    <!-- Side Catalog Container -->
+        
+
     <!-- Sidebar Container -->
+
             <div class="
-                col-lg-3 col-lg-offset-0
-                col-md-3 col-md-offset-0
-                col-sm-12
-                col-xs-12
-                sidebar-container
-            ">
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
                 <!-- Featured Tags -->
                 
                 <section>
                     <!-- no hr -->
                     <h5><a href="/tags/">FEATURED TAGS</a></h5>
                     <div class="tags">
-                        
-                            
-                        
-                            
+                       
+                          <a class="tag" href="/tags/#開發環境" title="開發環境">開發環境</a>
                         
                     </div>
                 </section>
                 
 
-                <!-- Short About -->
-                <section class="visible-md visible-lg">
-                    <hr><h5><a href="/about/">ABOUT ME</a></h5>
-                    <div class="short-about">
-
-                        
-                            <img src="/img/profile.jpg" />
-                        
-
-                        
-                            <p>安安</p>
-                        
-
-                        <!-- SNS Link -->
-                        <ul class="list-inline">
-                            
-                            
-                            
-
-                            
-
-                            
-                                <li>
-                                    <a target="_blank" href="https://www.facebook.com/cyrus.chiu1">
-                                        <span class="fa-stack fa-lg">
-                                            <i class="fa fa-circle fa-stack-2x"></i>
-                                            <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
-                                        </span>
-                                    </a>
-                                </li>
-                            
-
-                            
-                                <li>
-                                    <a target="_blank"  href="https://github.com/CyrusChiu">
-                                        <span class="fa-stack fa-lg">
-                                            <i class="fa fa-circle fa-stack-2x"></i>
-                                            <i class="fa fa-github fa-stack-1x fa-inverse"></i>
-                                        </span>
-                                    </a>
-                                </li>
-                            
-                            
-                            
-                            
-                        </ul>
-                    </div>
-                </section>
-                
                 <!-- Friends Blog -->
                 
             </div>
-        
+
+        </div>
     </div>
-</div>
+</article>
+
+
+
+
+<!-- disqus 公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = "cyrusblog";
+    var disqus_identifier = "http://cyruschiu.github.io/2016/09/05/jupyter-notebook-vim-binding/";
+    var disqus_url = "http://cyruschiu.github.io/2016/09/05/jupyter-notebook-vim-binding/";
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<!-- disqus 公共JS代码 end -->
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("http://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: ''
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
 
 
     <!-- Footer -->

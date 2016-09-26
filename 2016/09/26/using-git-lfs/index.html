@@ -90,14 +90,14 @@
 
                         
                         <li>
-                            <a href="/about/">About</a>
+                            <a href="/tags/">Tags</a>
                         </li>
                         
                     
 
                         
                         <li>
-                            <a href="/tags/">Tags</a>
+                            <a href="/about/">About</a>
                         </li>
                         
                     
@@ -210,7 +210,7 @@
 <li><p>新增一個 .bin 檔案，模擬大型檔案</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">$ echo this is a large file &gt; cat.bin</div></pre></td></tr></table></figure>
 </li>
-<li><p>開始用 git 管理上面新增的 3 個檔案</p>
+<li><p>開始用 git 管理上面新增的 3 個檔案，要注意的是這邊跟的是檔名<code>cat.bin</code> 而非路徑<code>./cat.bin</code></p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">$ git lfs track &apos;cat.bin&apos;</div><div class="line">&gt;&gt;&gt; Tracking cat.bin</div></pre></td></tr></table></figure>
 <p>直接下不帶參數的指令可以看到目前所有 tracked 的大型檔案</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">$ git lfs track</div><div class="line">&gt;&gt;&gt; Listing tracked paths</div><div class="line">    cat.bin (.gitattributes)</div></pre></td></tr></table></figure>

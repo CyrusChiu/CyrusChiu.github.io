@@ -194,9 +194,9 @@
 
 <p>應該很多人都同意 <a href="http://jupyter.org/" target="_blank" rel="external">jupyter notebook</a> 是一個很方便的開發環境，特別是在整理資料、寫報告、教學，大概沒有比這個更方便的環境了吧！（有的話拜託跟我說一下）<br>一直以來覺得 jupyter notebook 的缺點就是操作起來不像 vim 一樣有很多方便的快速鍵可以用，常常需要滑鼠移來移去。趁著還有印象，就把在 jupyter notebook 上面安裝 vim 插件的方法記下來。</p>
 <h3 id="安裝-IPython-notebook-extensions"><a href="#安裝-IPython-notebook-extensions" class="headerlink" title="安裝 IPython-notebook-extensions"></a>安裝 IPython-notebook-extensions</h3><p>首先到<a href="https://github.com/ipython-contrib/jupyter_contrib_nbextensions#installation" target="_blank" rel="external">這邊</a>安裝 notebook 的擴充插件</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">$ pip install https://github.com/ipython-contrib/jupyter_contrib_nbextensions/tarball/master</div><div class="line">$ jupyter contrib nbextension install --user</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ pip install https://github.com/ipython-contrib/jupyter_contrib_nbextensions/tarball/master</div><div class="line">$ jupyter contrib nbextension install --user</div></pre></td></tr></table></figure>
 <h3 id="安裝-vim-binding"><a href="#安裝-vim-binding" class="headerlink" title="安裝 vim-binding"></a>安裝 vim-binding</h3><p>再來到<a href="https://github.com/lambdalisue/jupyter-vim-binding" target="_blank" rel="external">這邊</a>安裝 jupyter-vim-binding 插件</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line"># 在 ~/.local/share/jupyter/ 建立nbextensions資料夾</div><div class="line">$ mkdir -p $(jupyter --data-dir)/nbextensions</div><div class="line"># Clone the repo</div><div class="line">$ cd $(jupyter --data-dir)/nbextensions</div><div class="line">$ git clone https://github.com/lambdalisue/jupyter-vim-binding</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"># 在 ~/.local/share/jupyter/ 建立nbextensions資料夾</div><div class="line">$ mkdir -p $(jupyter --data-dir)/nbextensions</div><div class="line"># Clone the repo</div><div class="line">$ cd $(jupyter --data-dir)/nbextensions</div><div class="line">$ git clone https://github.com/lambdalisue/jupyter-vim-binding</div></pre></td></tr></table></figure>
 <p>之後可以下指令 <code>$ jupyter nbextension enable vim_binding/vim_binding</code> 或是到 <code>127.0.0.1:8888/nbextensions</code> 把它打勾就可以使用了<br><img src="vim-binding-setting.jpg" alt="vim-binding-setting" title="vim-binding-setting"></p>
 
 
@@ -355,7 +355,7 @@
 
                 </ul>
                 <p class="copyright text-muted">
-                    Copyright &copy; Cyrus&#39;s Blog 2016 
+                    Copyright &copy; Cyrus&#39;s Blog 2017 
                     <br>
                 </p>
             </div>

@@ -211,38 +211,38 @@
 <li>過幾分鐘就可以在 <a href="http://username.github.io" target="_blank" rel="external">http://username.github.io</a> 看到你的網頁了</li>
 </ol>
 <h4 id="安裝-npm"><a href="#安裝-npm" class="headerlink" title="安裝 npm"></a>安裝 npm</h4><p>npm 是一個 node.js 的套件管理工具，裝好 node.js 就會自動裝完 npm 了</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">$ brew update</div><div class="line">$ brew install node</div></pre></td></tr></table></figure>
-<h4 id="安裝-Hexo-與主題模版"><a href="#安裝-Hexo-與主題模版" class="headerlink" title="安裝 Hexo 與主題模版"></a>安裝 Hexo 與主題模版</h4><p><a href="https://hexo.io/zh-tw/docs/" target="_blank" rel="external">Hexo</a><br><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">$ npm install -g hexo-cli</div></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ brew update</div><div class="line">$ brew install node</div></pre></td></tr></table></figure>
+<h4 id="安裝-Hexo-與主題模版"><a href="#安裝-Hexo-與主題模版" class="headerlink" title="安裝 Hexo 與主題模版"></a>安裝 Hexo 與主題模版</h4><p><a href="https://hexo.io/zh-tw/docs/" target="_blank" rel="external">Hexo</a><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ npm install -g hexo-cli</div></pre></td></tr></table></figure></p>
 <p>執行完上述命令之後，到<a href="https://hexo.io/themes/" target="_blank" rel="external">這裡</a>找一個喜歡的主題模版，我自己是用<a href="https://github.com/Kaijun/hexo-theme-huxblog" target="_blank" rel="external">Huxblog</a></p>
-<p>依照該 repo 的描述，把模版 clone 回來<br><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">$ git clone https://github.com/Kaijun/hexo-theme-huxblog.git</div><div class="line">$ cd hexo-theme-huxblog</div><div class="line">$ npm install</div></pre></td></tr></table></figure></p>
+<p>依照該 repo 的描述，把模版 clone 回來<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">$ git clone https://github.com/Kaijun/hexo-theme-huxblog.git</div><div class="line">$ cd hexo-theme-huxblog</div><div class="line">$ npm install</div></pre></td></tr></table></figure></p>
 <p>接著就會在 <code>hexo-theme-huxblog</code> 的目錄底下，看到一個名為 <code>_config.yml</code> 的檔案。這個設定檔就是之後整個部落格的主要配置，而 <code>hexo-theme-huxblog</code> 就是你未來的部落格的資料夾，將來有新增\修改\刪除文章，裝什麼套件等等，都是在這個資料夾底下進行。</p>
 <hr>
 <h2 id="開始設定自己的部落格"><a href="#開始設定自己的部落格" class="headerlink" title="開始設定自己的部落格"></a>開始設定自己的部落格</h2><p>做完上面的<a href="http://cyruschiu.github.io/2016/07/02/github-pages-with-hexo/#準備工作">準備工作</a>之後，就可以開始進行部落格的設定</p>
 <h4 id="config-yml"><a href="#config-yml" class="headerlink" title="config.yml"></a>config.yml</h4><p><code>_config.yml</code> 是整個部落格的設定檔，裡面的欄位說明可以在<a href="https://hexo.io/zh-tw/docs/configuration.html" target="_blank" rel="external">這裡</a>和<a href="http://ibruce.info/2013/11/22/hexo-your-blog/" target="_blank" rel="external">這裡</a>找到詳細介紹，我就不贅述，把一些背景圖片跟網站描述改成自己想要的就行。稍微提一下路徑的部份，如果要讓你的網站首頁是 <code>username.github.io</code> ，那麼<code>url</code> 與 <code>root</code> 設定如下：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line"># URL</div><div class="line">## If your site is put in a subdirectory, set url as &apos;http://yoursite.com/child&apos; and root as &apos;/child/&apos;</div><div class="line">url: http://username.github.io/</div><div class="line">root: /</div><div class="line">permalink: :year/:month/:day/:title/</div><div class="line">permalink_defaults:</div></pre></td></tr></table></figure>
-<p>此外，之後要 push 到 github 的設定也在這裡先做一下：<br><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line"># Deployment</div><div class="line">## Docs: https://hexo.io/docs/deployment.html</div><div class="line">deploy:</div><div class="line">  type: git</div><div class="line">  repo: https://github.com/username/username.github.io</div><div class="line">  branch: master</div></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"># URL</div><div class="line">## If your site is put in a subdirectory, set url as &apos;http://yoursite.com/child&apos; and root as &apos;/child/&apos;</div><div class="line">url: http://username.github.io/</div><div class="line">root: /</div><div class="line">permalink: :year/:month/:day/:title/</div><div class="line">permalink_defaults:</div></pre></td></tr></table></figure>
+<p>此外，之後要 push 到 github 的設定也在這裡先做一下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"># Deployment</div><div class="line">## Docs: https://hexo.io/docs/deployment.html</div><div class="line">deploy:</div><div class="line">  type: git</div><div class="line">  repo: https://github.com/username/username.github.io</div><div class="line">  branch: master</div></pre></td></tr></table></figure></p>
 <p>做完 config 的設定之後，整個部落格大概就有個雛形了。如果想要預覽一下的話，輸入</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">$ hexo server</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo server</div></pre></td></tr></table></figure>
 <p>然後到 <code>localhost:4000</code> 就可以看到調整後的結果。</p>
 <p><strong>請注意</strong>由於 hexo server 與 hexo 是獨立的，所以下達<code>hexo server</code> 指令前，請先安裝 <a href="https://github.com/hexojs/hexo-server" target="_blank" rel="external">hexo server</a>：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">$ npm install hexo-server --save</div></pre></td></tr></table></figure>
-<h4 id="寫文章"><a href="#寫文章" class="headerlink" title="寫文章"></a>寫文章</h4><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">$ hexo new post testpost</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ npm install hexo-server --save</div></pre></td></tr></table></figure>
+<h4 id="寫文章"><a href="#寫文章" class="headerlink" title="寫文章"></a>寫文章</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo new post testpost</div></pre></td></tr></table></figure>
 <p>上述命令會在<code>hexo-theme-huxblog/source/_posts/</code> 下面新增：</p>
 <ul>
 <li><code>testpost.md</code>  ：文章就用 markdown 語法寫在這裡</li>
 <li><code>testpost</code> ：文章內連的圖片什麼的就放這裡</li>
 </ul>
-<p><code>testpost.md</code>  檔案的前幾行是關於這篇文章的設定，範例如下：<br><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">---</div><div class="line">layout:     post</div><div class="line">title:      &quot;testpost&quot;</div><div class="line">subtitle:   &quot;This is for test&quot;</div><div class="line">date:       2016-07-01 12:00:00</div><div class="line">author:     &quot;Cyrus&quot;</div><div class="line">header-img: &quot;post-test.jpg&quot; //這張圖放在testpost資料夾  </div><div class="line">tags:</div><div class="line">    - 測試</div><div class="line">---</div></pre></td></tr></table></figure></p>
+<p><code>testpost.md</code>  檔案的前幾行是關於這篇文章的設定，範例如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">---</div><div class="line">layout:     post</div><div class="line">title:      &quot;testpost&quot;</div><div class="line">subtitle:   &quot;This is for test&quot;</div><div class="line">date:       2016-07-01 12:00:00</div><div class="line">author:     &quot;Cyrus&quot;</div><div class="line">header-img: &quot;post-test.jpg&quot; //這張圖放在testpost資料夾  </div><div class="line">tags:</div><div class="line">    - 測試</div><div class="line">---</div></pre></td></tr></table></figure></p>
 <p>不論是背景圖片與網頁內插入的圖片都放在 testpost 資料夾底下。寫完之後同樣可以用 <code>hexo server</code> 指令，在本機先預覽，確認沒問題再發佈。 但是在網頁背景圖片的部分這時候還沒辦法正常顯示，可以先執行一下 <code>hexo generate</code> 生成靜態網頁，才有辦法正常預覽。</p>
 <hr>
 <h2 id="佈署"><a href="#佈署" class="headerlink" title="佈署"></a>佈署</h2><p>文章寫好了，主題也設定完了，終於到了發佈的時候。由於前面已經在 <code>_config.yml</code> 中設定過了 push 到 github 的參數，現在我們只要再安裝一個小工具，馬上就可以佈署到 github 上面了！</p>
-<p>安裝 <a href="https://github.com/hexojs/hexo-deployer-git" target="_blank" rel="external">hexo-deployer-git</a><br><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">$ npm install hexo-deployer-git --save</div></pre></td></tr></table></figure></p>
-<p>OK! 現在真的可以佈署上去了！<br><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">$ hexo clean &amp;&amp; hexo deploy</div></pre></td></tr></table></figure></p>
+<p>安裝 <a href="https://github.com/hexojs/hexo-deployer-git" target="_blank" rel="external">hexo-deployer-git</a><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ npm install hexo-deployer-git --save</div></pre></td></tr></table></figure></p>
+<p>OK! 現在真的可以佈署上去了！<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo clean &amp;&amp; hexo deploy</div></pre></td></tr></table></figure></p>
 <p>大功告成！網頁現在已經可以在 <a href="http://username.github.io" target="_blank" rel="external">http://username.github.io</a> 找到囉！</p>
 <hr>
 <h2 id="網站中顯示數學符號"><a href="#網站中顯示數學符號" class="headerlink" title="網站中顯示數學符號"></a>網站中顯示數學符號</h2><p>整體做下來，連我這個不熟前端的人都一下就搞定了，實在是感謝許多大大無私分享這麼多方便的套件。不過最後，我還是要為自己的部落格加上一個功能。我希望之後能在這邊記錄一些自己學習與工作的筆記，而目前的內容又多與資料科學有關。所以，文章中當然要能夠正確編輯和顯示數學方程式啦！就像這樣～</p>
 <p>$$\theta^{n+1}=\theta^n-\eta\nabla C\left( \theta^n\right)$$</p>
-<p>所以這時候還要再安裝一個套件 <a href="https://github.com/akfish/hexo-math" target="_blank" rel="external">hexo math</a><br><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">$ npm install hexo-math --save</div></pre></td></tr></table></figure></p>
+<p>所以這時候還要再安裝一個套件 <a href="https://github.com/akfish/hexo-math" target="_blank" rel="external">hexo math</a><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ npm install hexo-math --save</div></pre></td></tr></table></figure></p>
 <p>之後在執行 <code>hexo server</code> 等指令時，hexo 就會利用 MathJax 來解析文章內的 LaTex 語法，讓數學符號能正式顯示在網頁上囉！</p>
 
 
@@ -397,7 +397,7 @@
 
                 </ul>
                 <p class="copyright text-muted">
-                    Copyright &copy; Cyrus&#39;s Blog 2016 
+                    Copyright &copy; Cyrus&#39;s Blog 2017 
                     <br>
                 </p>
             </div>

@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+          learning-Tensoflow-Seq2Seq-for-translate - Cyrus&#39; Blog
+        
+    </title>
+
+    <link rel="canonical" href="http://cyruschiu.github.io/2017/02/24/learning-Tensoflow-Seq2Seq-for-translate/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    <!-- Pygments Github CSS -->
+    <link rel="stylesheet" href="/css/syntax.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="http://cdn.staticfile.org/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Cyrus&#39;s Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    
+<!-- Image to hack wechat -->
+<!-- <img src="http://cyruschiu.github.io/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="{{ site.baseurl }}/{% if page.header-img %}{{ page.header-img }}{% else %}{{ site.header-img }}{% endif %}" width="0" height="0"> -->
+
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/home-bg.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                          <a class="tag" href="/tags/#自然語言處理" title="自然語言處理">自然語言處理</a>
+                        
+                          <a class="tag" href="/tags/#深度學習" title="深度學習">深度學習</a>
+                        
+                    </div>
+                    <h1>learning-Tensoflow-Seq2Seq-for-translate</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by Cyrus Chiu on
+                        2017-02-24
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <p>orflow 官方 Sequence-to -Sequence Models 學習</p>
+<ul>
+<li><a href="https://www.tensorflow.org/tutorials/seq2seq" target="_blank" rel="external">官方文件</a></li>
+<li><a href="https://github.com/tensorflow/models" target="_blank" rel="external">官方程式碼位址</a></li>
+<li>這份文件基於 tensforlow r1.0 版本撰寫，裡面的程式碼都相容於 1.0 版</li>
+</ul>
+<h2 id="序"><a href="#序" class="headerlink" title="序"></a>序</h2><p>Tensoflow 這份教學是利用 seq2seq model 並加上 attention 機制[1-4]，來實做英文對法文的機器翻譯。</p>
+<p>操作方式很簡單，將官方提供的程式碼整份 clone 下來，cd 到 <code>models/tutorials/rnn/translate</code> 目錄下</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">python translate.py --data_dir [訓練資料位址] --train_dir [訓練記錄與模型存放位址]</div></pre></td></tr></table></figure>
+<p>機器就會自動開始下載資料集、前處理、並且開始訓練了。重複執行也沒有關係，程式會先檢查是否有已下載的資料集，已前處理完成的資料，甚至是已訓練好的模型，並且自動從當下的狀態開始繼續訓練。如果不帶參數，單純執行 <code>python translate.py</code> ，那麼會預設使用 <code>/tmp/</code> 作為存放的目錄。</p>
+<h2 id="translate-py"><a href="#translate-py" class="headerlink" title="translate.py"></a>translate.py</h2><p>顯然，<code>translate.py</code> 是這裡面的主程式，接下來來看看這隻程式做了什麼事情。<br><figure class="highlight python"><table><tr><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">(_)</span>:</span></div><div class="line">  <span class="keyword">if</span> FLAGS.self_test:</div><div class="line">    self_test()</div><div class="line">  <span class="keyword">elif</span> FLAGS.decode:</div><div class="line">    decode()</div><div class="line">  <span class="keyword">else</span>:</div><div class="line">    train()</div></pre></td></tr></table></figure></p>
+<p>這段程式碼顯示，如果不下其他指令，那麼會自動執行訓練，否則是執行測試，或是 decode，也就是預測法文的模式。</p>
+<p>我們先將 <code>train()</code> 的主要功能拆成以下幾個區塊，並分開來討論。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><div class="line"><span class="keyword">with</span> tf.Session() <span class="keyword">as</span> sess:</div><div class="line">   <span class="comment"># 區塊1，模型初始化</span></div><div class="line">   <span class="comment"># Create model.</span></div><div class="line">   print(<span class="string">"Creating %d layers of %d units."</span> % (FLAGS.num_layers, FLAGS.size))</div><div class="line">   <span class="comment"># 透過 create_model() 方法創建一個 seq2seq_model</span></div><div class="line">   model = create_model(sess, <span class="keyword">False</span>)</div><div class="line">   </div><div class="line">   <span class="comment"># 區塊2，讀入資料</span></div><div class="line">   <span class="comment"># Read data into buckets and compute their sizes.</span></div><div class="line">   <span class="keyword">print</span> (<span class="string">"Reading development and training data (limit: %d)."</span></div><div class="line">          % FLAGS.max_train_data_size)</div><div class="line">   <span class="comment"># read_data 函數讀取 train, dev 的路徑，</span></div><div class="line">   dev_set = read_data(from_dev, to_dev)</div><div class="line">   train_set = read_data(from_train, to_train, FLAGS.max_train_data_size)</div><div class="line">   train_bucket_sizes = [len(train_set[b]) <span class="keyword">for</span> b <span class="keyword">in</span> xrange(len(_buckets))]</div><div class="line">   train_total_size = float(sum(train_bucket_sizes))</div><div class="line"></div><div class="line">   train_buckets_scale = [sum(train_bucket_sizes[:i + <span class="number">1</span>]) / train_total_size</div><div class="line">                          <span class="keyword">for</span> i <span class="keyword">in</span> xrange(len(train_bucket_sizes))]</div><div class="line"></div><div class="line">   <span class="keyword">while</span> <span class="keyword">True</span>:</div><div class="line">     <span class="comment"># 區塊3，建立 batch</span></div><div class="line">     <span class="comment"># Choose a bucket according to data distribution. We pick a random number</span></div><div class="line">     <span class="comment"># in [0, 1] and use the corresponding interval in train_buckets_scale.</span></div><div class="line">     random_number_01 = np.random.random_sample()</div><div class="line">     bucket_id = min([i <span class="keyword">for</span> i <span class="keyword">in</span> xrange(len(train_buckets_scale))</div><div class="line">                      <span class="keyword">if</span> train_buckets_scale[i] &gt; random_number_01])</div><div class="line"></div><div class="line">     <span class="comment"># Get a batch and make a step.</span></div><div class="line">     start_time = time.time()</div><div class="line">     encoder_inputs, decoder_inputs, target_weights = model.get_batch(</div><div class="line">         train_set, bucket_id)</div><div class="line"></div><div class="line">     <span class="comment"># 區塊4，訓練</span></div><div class="line">     _, step_loss, _ = model.step(sess, encoder_inputs, decoder_inputs,</div><div class="line">                                  target_weights, bucket_id, <span class="keyword">False</span>)</div></pre></td></tr></table></figure>
+<h3 id="1-模型初始化"><a href="#1-模型初始化" class="headerlink" title="1.模型初始化"></a>1.模型初始化</h3><p><code>train()</code> 首先會透過 <code>create_model()</code> 函數來建立 seq2seq model。該函數會呼叫<code>seq2seq_model.py</code>，並初始化一個 seq2seqModel class。<br><figure class="highlight python"><table><tr><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self,</span></span></div><div class="line">             source_vocab_size, # 英文單詞表的數量</div><div class="line">             target_vocab_size, # 法文單詞表的數量</div><div class="line">             buckets, # buckets 於下面詳述</div><div class="line">             size, # 模型每個 layer 的 neuron size</div><div class="line">             num_layers, </div><div class="line">             max_gradient_norm,  # 訓練 RNN 時 clip 梯度的值</div><div class="line">             batch_size, </div><div class="line">             learning_rate,</div><div class="line">             learning_rate_decay_factor,</div><div class="line">             use_lstm=False,</div><div class="line">             num_samples=<span class="number">512</span>, # sampled softmax size</div><div class="line">             forward_only=False, # train時為False, decode時為true</div><div class="line">             dtype=tf.float32):</div></pre></td></tr></table></figure></p>
+<p>可以看到，這個 class 的輸入都是一些常見訓練 RNN 的參數。</p>
+<p>bucket 預設是 <code>[(5, 10), (10, 15), (20, 25), (40, 50)]</code>，舉例來說，對 (5,10) 這個 bucket 而言：</p>
+<ul>
+<li>英文輸入：<code>I go .</code></li>
+<li>分詞：<code>[&quot;I&quot;, &quot;go&quot;, &quot;.&quot;]</code></li>
+<li>編碼：<code>[PAD PAD &quot;.&quot; &quot;go&quot; &quot;I&quot;]</code></li>
+</ul>
+<p>那麼我們會把輸入編碼到長度5，</p>
+<ul>
+<li>法文輸入：<code>Je vais .</code></li>
+<li>分詞：<code>[&quot;Je&quot;, &quot;vais&quot;, &quot;.&quot;]</code></li>
+<li>編碼：<code>[GO &quot;Je&quot; &quot;vais&quot; &quot;.&quot; EOS PAD PAD PAD PAD PAD]</code></li>
+</ul>
+<p>並且把輸出編碼到長度 10。</p>
+<p>Bucket 是工程上使用的一種方式。理論上 RNN 可以輸出任意長度的句子，但這樣勢必會因為每句話的長度不同，而產生許多無用的 graph。使用 Bucket 可以減少產生大量，並可能會有不少重複的 graph。若有一長度為 ( 6, 16 ) 的 (英文, 法文) 句子，那麼則會被分配到 (20, 25) 這個 bucket。並且英文會被 padding 至長度 20，法文會被 padding 至長度 25。</p>
+<h3 id="2-讀入資料"><a href="#2-讀入資料" class="headerlink" title="2.讀入資料"></a>2.讀入資料</h3><p>在 <code>create_model()</code> 之後，接下來是 <code>read_data()</code> 函數。<br><figure class="highlight python"><table><tr><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">read_data</span><span class="params">(source_path, target_path, max_size=None)</span>:</span></div><div class="line">  data_set = [[] <span class="keyword">for</span> _ <span class="keyword">in</span> _buckets]</div><div class="line">  <span class="comment"># 讀入英文檔案</span></div><div class="line">  <span class="keyword">with</span> tf.gfile.GFile(source_path, mode=<span class="string">"r"</span>) <span class="keyword">as</span> source_file:</div><div class="line">    <span class="comment"># 讀入法文檔案</span></div><div class="line">    <span class="keyword">with</span> tf.gfile.GFile(target_path, mode=<span class="string">"r"</span>) <span class="keyword">as</span> target_file:</div><div class="line">      <span class="comment"># 每次讀入一行例如 ( '1 2 3 4 5\n', '99 98 97 96 95\n') 的(英,法)句對</span></div><div class="line">      source, target = source_file.readline(), target_file.readline()</div><div class="line">      counter = <span class="number">0</span></div><div class="line">      <span class="comment"># 逐行處理，去除 \n，並且 tokenize 化</span></div><div class="line">      <span class="keyword">while</span> source <span class="keyword">and</span> target <span class="keyword">and</span> (<span class="keyword">not</span> max_size <span class="keyword">or</span> counter &lt; max_size):</div><div class="line">        counter += <span class="number">1</span></div><div class="line">        <span class="keyword">if</span> counter % <span class="number">100000</span> == <span class="number">0</span>:</div><div class="line">          print(<span class="string">"  reading data line %d"</span> % counter)</div><div class="line">          sys.stdout.flush()</div><div class="line">        source_ids = [int(x) <span class="keyword">for</span> x <span class="keyword">in</span> source.split()]</div><div class="line">        target_ids = [int(x) <span class="keyword">for</span> x <span class="keyword">in</span> target.split()]</div><div class="line">        target_ids.append(data_utils.EOS_ID)</div><div class="line">        <span class="comment"># 這邊計算每句話的長度，並且分配到適合該長度的 bucket 之中</span></div><div class="line">        <span class="keyword">for</span> bucket_id, (source_size, target_size) <span class="keyword">in</span> enumerate(_buckets):</div><div class="line">          <span class="keyword">if</span> len(source_ids) &lt; source_size <span class="keyword">and</span> len(target_ids) &lt; target_size:</div><div class="line">            data_set[bucket_id].append([source_ids, target_ids])</div><div class="line">            <span class="keyword">break</span></div><div class="line">        source, target = source_file.readline(), target_file.readline()</div><div class="line">  <span class="keyword">return</span> data_set</div><div class="line">```   </div><div class="line">這個函數預設會讀入英/法文已被編碼為數字的檔案 `giga-fren.release2.fixed.en.ids40000`、`giga-fren.release2.fixed.fr.ids40000` 長相如下：</div><div class="line"></div><div class="line">```cmd</div><div class="line">$ head <span class="number">-5</span> giga-fren.release2.fixed.en.ids40000</div><div class="line"><span class="number">8874</span> <span class="number">25544</span> <span class="number">347</span> <span class="number">8874</span> <span class="number">1646</span> <span class="number">347</span> <span class="number">1202</span> <span class="number">75</span> <span class="number">2334</span> <span class="number">347</span> <span class="number">1060</span> <span class="number">3</span> <span class="number">1871</span> <span class="number">596</span> <span class="number">347</span> <span class="number">17249</span> <span class="number">347</span> <span class="number">7113</span> <span class="number">347</span> <span class="number">1641</span> <span class="number">347</span> <span class="number">2891</span> <span class="number">347</span> <span class="number">12106</span> <span class="number">347</span> <span class="number">3</span> <span class="number">902</span> <span class="number">347</span> <span class="number">1513</span> <span class="number">347</span> <span class="number">4892</span> <span class="number">7614</span> <span class="number">2002</span> <span class="number">7</span> <span class="number">33</span> <span class="number">596</span> <span class="number">1869</span></div><div class="line"><span class="number">1368</span> <span class="number">3344</span></div><div class="line"><span class="number">4892</span></div><div class="line"><span class="number">12106</span></div><div class="line"><span class="number">3899</span></div><div class="line">$ head <span class="number">-5</span> giga-fren.release2.fixed.fr.ids40000</div><div class="line"><span class="number">64</span> <span class="number">30</span> <span class="number">9546</span> <span class="number">294</span> <span class="number">231</span> <span class="number">349</span> <span class="number">64</span> <span class="number">30</span> <span class="number">9546</span> <span class="number">8</span> <span class="number">249</span> <span class="number">349</span> <span class="number">2114</span> <span class="number">864</span> <span class="number">349</span> <span class="number">48</span> <span class="number">551</span> <span class="number">5</span> <span class="number">3004</span> <span class="number">14</span> <span class="number">588</span> <span class="number">836</span> <span class="number">349</span> <span class="number">26391</span> <span class="number">349</span> <span class="number">26643</span> <span class="number">349</span> <span class="number">1278</span> <span class="number">349</span> <span class="number">4233</span> <span class="number">349</span> <span class="number">3</span> <span class="number">349</span> <span class="number">453</span> <span class="number">3</span> <span class="number">349</span> <span class="number">1163</span> <span class="number">349</span> <span class="number">3085</span> <span class="number">2488</span> <span class="number">8350</span> <span class="number">14</span> <span class="number">40</span></div><div class="line"><span class="number">1089</span> <span class="number">14</span> <span class="number">261</span></div><div class="line"><span class="number">9146</span></div><div class="line"><span class="number">4951</span></div><div class="line"><span class="number">2523</span></div></pre></td></tr></table></figure></p>
+<p><code>max_size=30</code>會忽略長度超過30的句子，若設0或是None的話，會全部讀進來。逐行處理之後，回傳一個長度為 4 的 data_set。<br>為什麼長度為 4 呢？因為我們的 bucket 預設是長度 4 的 list：<code>[(5, 10), (10, 15), (20, 25), (40, 50)]</code>。因此 data_set 的長度也為 4。<br>其中 <code>data_set[0]</code>，由於 bucket_size 是 (5,10) ，因此存放著例如 <code>[[12106], [4951, 2]]</code> 這樣長度為 (1,2) 的 tokenized 編碼結果。</p>
+<h3 id="3-取得-batch"><a href="#3-取得-batch" class="headerlink" title="3.取得 batch"></a>3.取得 batch</h3><figure class="highlight python"><table><tr><td class="code"><pre><div class="line">random_number_01 = np.random.random_sample()</div><div class="line">bucket_id = min([i <span class="keyword">for</span> i <span class="keyword">in</span> xrange(len(train_buckets_scale))</div><div class="line">                       <span class="keyword">if</span> train_buckets_scale[i] &gt; random_number_01])</div><div class="line">encoder_inputs, decoder_inputs, target_weights = model.get_batch(</div><div class="line">          train_set, bucket_id)</div><div class="line">```          </div><div class="line"></div><div class="line">`get_batch()` 是定義在 `seq2seq_model.py` 之下的一個方法，需要的參數除了方法本身的 </div><div class="line"></div><div class="line">-  `data`：即 `read_data()` 回傳的 data_set。</div><div class="line">-  `bucket_id`：因為對於不同的 bucket 有不同的 graph，假設我們有一個 minibatch ，若是跟這一批資料最接近的 bucket id 是 <span class="number">2</span>，那我們在訓練的時候只要 minimize `loss[<span class="number">2</span>]` 即可。</div><div class="line"></div><div class="line">之外，還需要一個 <span class="class"><span class="keyword">class</span> 本身的 <span class="title">property</span>:</span> `batch_size`。</div><div class="line"></div><div class="line"> </div><div class="line">```python</div><div class="line">  <span class="function"><span class="keyword">def</span> <span class="title">get_batch</span><span class="params">(self, data, bucket_id)</span>:</span></div><div class="line"></div><div class="line">    <span class="comment"># 根據傳進來的 bucket_id 決定這次的 encoder, deocder size，例如 5, 10</span></div><div class="line">    encoder_size, decoder_size = self.buckets[bucket_id]</div><div class="line">    encoder_inputs, decoder_inputs = [], []</div><div class="line"></div><div class="line">    <span class="comment"># Get a random batch of encoder and decoder inputs from data,</span></div><div class="line">    <span class="comment"># pad them if needed, reverse encoder inputs and add GO to decoder.</span></div><div class="line">    <span class="keyword">for</span> _ <span class="keyword">in</span> xrange(self.batch_size):</div><div class="line">      <span class="comment"># 前面提過 data 是一個長度為4的list，data[i] 存放長度符合 bucket[i] 的資料</span></div><div class="line">      encoder_input, decoder_input = random.choice(data[bucket_id])</div><div class="line"></div><div class="line">      <span class="comment"># Encoder inputs are padded and then reversed.</span></div><div class="line">      encoder_pad = [data_utils.PAD_ID] * (encoder_size - len(encoder_input))</div><div class="line">      encoder_inputs.append(list(reversed(encoder_input + encoder_pad)))</div><div class="line"></div><div class="line">      <span class="comment"># Decoder inputs get an extra "GO" symbol, and are padded then.</span></div><div class="line">      decoder_pad_size = decoder_size - len(decoder_input) - <span class="number">1</span></div><div class="line">      decoder_inputs.append([data_utils.GO_ID] + decoder_input +</div><div class="line">                            [data_utils.PAD_ID] * decoder_pad_size)</div><div class="line"></div><div class="line">    <span class="comment"># Now we create batch-major vectors from the data selected above.</span></div><div class="line">    batch_encoder_inputs, batch_decoder_inputs, batch_weights = [], [], []</div><div class="line"></div><div class="line">    <span class="comment"># Batch encoder inputs are just re-indexed encoder_inputs.</span></div><div class="line">    <span class="keyword">for</span> length_idx <span class="keyword">in</span> xrange(encoder_size):</div><div class="line">      batch_encoder_inputs.append(</div><div class="line">          np.array([encoder_inputs[batch_idx][length_idx]</div><div class="line">                    <span class="keyword">for</span> batch_idx <span class="keyword">in</span> xrange(self.batch_size)], dtype=np.int32))</div><div class="line"></div><div class="line">    <span class="comment"># Batch decoder inputs are re-indexed decoder_inputs, we create weights.</span></div><div class="line">    <span class="keyword">for</span> length_idx <span class="keyword">in</span> xrange(decoder_size):</div><div class="line">      batch_decoder_inputs.append(</div><div class="line">          np.array([decoder_inputs[batch_idx][length_idx]</div><div class="line">                    <span class="keyword">for</span> batch_idx <span class="keyword">in</span> xrange(self.batch_size)], dtype=np.int32))</div><div class="line"></div><div class="line">      <span class="comment"># Create target_weights to be 0 for targets that are padding.</span></div><div class="line">      <span class="comment"># 這個 weights 是給模型訓練用的，有目標值的地方為1，其他為0</span></div><div class="line">      <span class="comment"># 有目標值的地方，指的是 decoder_input 平移1格的結果</span></div><div class="line">      batch_weight = np.ones(self.batch_size, dtype=np.float32)</div><div class="line">      <span class="keyword">for</span> batch_idx <span class="keyword">in</span> xrange(self.batch_size):</div><div class="line">        <span class="comment"># We set weight to 0 if the corresponding target is a PAD symbol.</span></div><div class="line">        <span class="comment"># The corresponding target is decoder_input shifted by 1 forward.</span></div><div class="line">        <span class="keyword">if</span> length_idx &lt; decoder_size - <span class="number">1</span>:</div><div class="line">          target = decoder_inputs[batch_idx][length_idx + <span class="number">1</span>]</div><div class="line">        <span class="keyword">if</span> length_idx == decoder_size - <span class="number">1</span> <span class="keyword">or</span> target == data_utils.PAD_ID:</div><div class="line">          batch_weight[batch_idx] = <span class="number">0.0</span></div><div class="line">      batch_weights.append(batch_weight)</div><div class="line">    <span class="keyword">return</span> batch_encoder_inputs, batch_decoder_inputs, batch_weights</div></pre></td></tr></table></figure>
+<p>以上面這個例子來說，假設我們把 <code>batch_size</code> 設為 8，那麼回傳的結果中每個 array 的長度皆為 8，並且因為 bucket 是 (5, 10)，所以 <code>encoder_inputs</code> 長度為 5，<code>decoder_inputs</code> 長度為 10。</p>
+<p>下面的回傳結果可以理解成 <code>batch_size=8</code>，英文輸入序列：<code>[ 0, 0, 0, 0, 12106]</code>，法文輸入序列：<code>[1, 4951, 2, 0, 0, 0, 0, 0, 0, 0]</code>。其中 0 代表 PAD_ID，1 代表 GO_ID，2 代表 EOS_ID。並且 weight：<code>[1, 1, 0, 0, 0, 0, 0, 0, 0, 0]</code>，代表 1, 4951 是有對應到輸出的。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><div class="line"><span class="comment"># batch_encoder_inputs</span></div><div class="line">[array([<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>], dtype=int32),</div><div class="line"> array([<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>], dtype=int32),</div><div class="line"> array([<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>], dtype=int32),</div><div class="line"> array([<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>], dtype=int32),</div><div class="line"> array([<span class="number">12106</span>, <span class="number">12106</span>, <span class="number">12106</span>, <span class="number">12106</span>, <span class="number">12106</span>, <span class="number">12106</span>, <span class="number">12106</span>, <span class="number">12106</span>], dtype=int32)]</div><div class="line"></div><div class="line"> <span class="comment"># batch_decoder_inputs</span></div><div class="line"> [array([<span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>], dtype=int32),</div><div class="line"> array([<span class="number">4951</span>, <span class="number">4951</span>, <span class="number">4951</span>, <span class="number">4951</span>, <span class="number">4951</span>, <span class="number">4951</span>, <span class="number">4951</span>, <span class="number">4951</span>], dtype=int32),</div><div class="line"> array([<span class="number">2</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="number">2</span>, <span class="number">2</span>], dtype=int32),</div><div class="line"> array([<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>], dtype=int32),</div><div class="line"> array([<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>], dtype=int32),</div><div class="line"> array([<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>], dtype=int32),</div><div class="line"> array([<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>], dtype=int32),</div><div class="line"> array([<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>], dtype=int32),</div><div class="line"> array([<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>], dtype=int32),</div><div class="line"> array([<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>], dtype=int32)]</div><div class="line"></div><div class="line"><span class="comment">#batch_weights</span></div><div class="line">[array([ <span class="number">1.</span>,  <span class="number">1.</span>,  <span class="number">1.</span>,  <span class="number">1.</span>,  <span class="number">1.</span>,  <span class="number">1.</span>,  <span class="number">1.</span>,  <span class="number">1.</span>], dtype=float32),</div><div class="line"> array([ <span class="number">1.</span>,  <span class="number">1.</span>,  <span class="number">1.</span>,  <span class="number">1.</span>,  <span class="number">1.</span>,  <span class="number">1.</span>,  <span class="number">1.</span>,  <span class="number">1.</span>], dtype=float32),</div><div class="line"> array([ <span class="number">0.</span>,  <span class="number">0.</span>,  <span class="number">0.</span>,  <span class="number">0.</span>,  <span class="number">0.</span>,  <span class="number">0.</span>,  <span class="number">0.</span>,  <span class="number">0.</span>], dtype=float32),</div><div class="line"> array([ <span class="number">0.</span>,  <span class="number">0.</span>,  <span class="number">0.</span>,  <span class="number">0.</span>,  <span class="number">0.</span>,  <span class="number">0.</span>,  <span class="number">0.</span>,  <span class="number">0.</span>], dtype=float32),</div><div class="line"> array([ <span class="number">0.</span>,  <span class="number">0.</span>,  <span class="number">0.</span>,  <span class="number">0.</span>,  <span class="number">0.</span>,  <span class="number">0.</span>,  <span class="number">0.</span>,  <span class="number">0.</span>], dtype=float32),</div><div class="line"> array([ <span class="number">0.</span>,  <span class="number">0.</span>,  <span class="number">0.</span>,  <span class="number">0.</span>,  <span class="number">0.</span>,  <span class="number">0.</span>,  <span class="number">0.</span>,  <span class="number">0.</span>], dtype=float32),</div><div class="line"> array([ <span class="number">0.</span>,  <span class="number">0.</span>,  <span class="number">0.</span>,  <span class="number">0.</span>,  <span class="number">0.</span>,  <span class="number">0.</span>,  <span class="number">0.</span>,  <span class="number">0.</span>], dtype=float32),</div><div class="line"> array([ <span class="number">0.</span>,  <span class="number">0.</span>,  <span class="number">0.</span>,  <span class="number">0.</span>,  <span class="number">0.</span>,  <span class="number">0.</span>,  <span class="number">0.</span>,  <span class="number">0.</span>], dtype=float32),</div><div class="line"> array([ <span class="number">0.</span>,  <span class="number">0.</span>,  <span class="number">0.</span>,  <span class="number">0.</span>,  <span class="number">0.</span>,  <span class="number">0.</span>,  <span class="number">0.</span>,  <span class="number">0.</span>], dtype=float32),</div><div class="line"> array([ <span class="number">0.</span>,  <span class="number">0.</span>,  <span class="number">0.</span>,  <span class="number">0.</span>,  <span class="number">0.</span>,  <span class="number">0.</span>,  <span class="number">0.</span>,  <span class="number">0.</span>], dtype=float32)]</div></pre></td></tr></table></figure>
+<h3 id="4-訓練"><a href="#4-訓練" class="headerlink" title="4.訓練"></a>4.訓練</h3><p>上面得到了 <code>get_batch()</code> 回傳的三個值，之後就是進入訓練的本身了</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><div class="line">_, step_loss, _ = model.step(sess, encoder_inputs, decoder_inputs,</div><div class="line">                             target_weights, bucket_id, <span class="keyword">False</span>)</div></pre></td></tr></table></figure>
+<p><code>step()</code> 同樣是定義在 <code>seq2seq_model.py</code> 之下的一個方法，主要的功能是把輸入與輸出等建立 placeholder 與轉為 feed_dict，以進入訓練的主程序。</p>
+<p>以下這段程式會建立一個 bucket 版本的 seq2seq 模型，需要輸入先前提及的 encoder_inputs、decoder_inputs、target_weights。另外的 targets 表示的是訓練目標，其實就是 decoder_input 的現在位置+1。具體的參數說明可以參考<a href="https://www.tensorflow.org/api_docs/python/tf/contrib/legacy_seq2seq/model_with_buckets" target="_blank" rel="external">官方文件</a>。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><div class="line">self.outputs, self.losses = tf.contrib.legacy_seq2seq.model_with_buckets(</div><div class="line">    self.encoder_inputs, self.decoder_inputs, targets,</div><div class="line">    self.target_weights, buckets,</div><div class="line">    seq2seq=<span class="keyword">lambda</span> x, y: seq2seq_f(x, y, <span class="keyword">False</span>),</div><div class="line">    softmax_loss_function=softmax_loss_function)</div></pre></td></tr></table></figure>
+<p>上面這段程式碼中的 seq2seq 參數 <code>seq2seq_f(x, y, False)</code> 也是定義在 <code>seq2seq_model.py</code> 裡面的。指的是將 x: encoder_input 與 y: decoder_input 輸入，回傳的就是這個 seq2seq mode 的 output 與 state。False 這個參數則是 <code>seq2seq_f()</code> 裡面自行定義作為 do_decode or not 的 Boolean。我們把相關的程式碼列出來如下，可以看到多為 tensorflow 之中對於 RNN 的設定。其中比較特別的是 <code>sampled_softmax_loss</code> 以及 <code>seq2seq_f</code>。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><div class="line">output_projection = <span class="keyword">None</span></div><div class="line">softmax_loss_function = <span class="keyword">None</span></div><div class="line"><span class="comment"># Sampled softmax only makes sense if we sample less than vocabulary size.</span></div><div class="line"><span class="keyword">if</span> num_samples &gt; <span class="number">0</span> <span class="keyword">and</span> num_samples &lt; self.target_vocab_size:</div><div class="line">  w_t = tf.get_variable(<span class="string">"proj_w"</span>, [self.target_vocab_size, size], dtype=dtype)</div><div class="line">  w = tf.transpose(w_t)</div><div class="line">  b = tf.get_variable(<span class="string">"proj_b"</span>, [self.target_vocab_size], dtype=dtype)</div><div class="line">  output_projection = (w, b)</div><div class="line"></div><div class="line">  <span class="function"><span class="keyword">def</span> <span class="title">sampled_loss</span><span class="params">(labels, inputs)</span>:</span></div><div class="line">    labels = tf.reshape(labels, [<span class="number">-1</span>, <span class="number">1</span>])</div><div class="line">    <span class="comment"># We need to compute the sampled_softmax_loss using 32bit floats to</span></div><div class="line">    <span class="comment"># avoid numerical instabilities.</span></div><div class="line">    local_w_t = tf.cast(w_t, tf.float32)</div><div class="line">    local_b = tf.cast(b, tf.float32)</div><div class="line">    local_inputs = tf.cast(inputs, tf.float32)</div><div class="line">    <span class="keyword">return</span> tf.cast(</div><div class="line">        tf.nn.sampled_softmax_loss(</div><div class="line">            weights=local_w_t,</div><div class="line">            biases=local_b,</div><div class="line">            labels=labels,</div><div class="line">            inputs=local_inputs,</div><div class="line">            num_sampled=num_samples,</div><div class="line">            num_classes=self.target_vocab_size),</div><div class="line">        dtype)</div><div class="line">  softmax_loss_function = sampled_loss</div><div class="line"></div><div class="line"><span class="comment"># Create the internal multi-layer cell for our RNN.</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">single_cell</span><span class="params">()</span>:</span></div><div class="line">  <span class="keyword">return</span> tf.contrib.rnn.GRUCell(size)</div><div class="line"><span class="keyword">if</span> use_lstm:</div><div class="line">  <span class="function"><span class="keyword">def</span> <span class="title">single_cell</span><span class="params">()</span>:</span></div><div class="line">    <span class="keyword">return</span> tf.contrib.rnn.BasicLSTMCell(size)</div><div class="line">cell = single_cell()</div><div class="line"><span class="keyword">if</span> num_layers &gt; <span class="number">1</span>:</div><div class="line">  cell = tf.contrib.rnn.MultiRNNCell([single_cell() <span class="keyword">for</span> _ <span class="keyword">in</span> range(num_layers)])</div><div class="line"></div><div class="line"><span class="comment"># The seq2seq function: we use embedding for the input and attention.</span></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">seq2seq_f</span><span class="params">(encoder_inputs, decoder_inputs, do_decode)</span>:</span></div><div class="line">  <span class="keyword">return</span> tf.contrib.legacy_seq2seq.embedding_attention_seq2seq(</div><div class="line">      encoder_inputs,</div><div class="line">      decoder_inputs,</div><div class="line">      cell,</div><div class="line">      num_encoder_symbols=source_vocab_size,</div><div class="line">      num_decoder_symbols=target_vocab_size,</div><div class="line">      embedding_size=size,</div><div class="line">      output_projection=output_projection,</div><div class="line">      feed_previous=do_decode,</div><div class="line">      dtype=dtype)</div></pre></td></tr></table></figure>
+<p><code>sampled_softmax_loss</code> 是用在當有大量的輸出類別必須被 predict 的時候，舉例來說，像是英翻法這樣的翻譯工作，法文的詞典(target_vocab_size) size 有 40000 之多，這時候我們採用 sampled_softmax_loss 可以快速有效地建立一個 softmax classifier。其中的參數<code>num_sampled</code>指的是 sampling 的數目，在這邊是512。<code>num_classes</code>指的就是實際的 class 數目，在這邊就是以法文詞典的數目來代表。要注意的是 <code>num_sampled</code>不可以大於 <code>num_classes</code> 就是了。細節可參考<a href="https://www.tensorflow.org/api_docs/python/tf/nn/sampled_softmax_loss" target="_blank" rel="external">官方文件說明</a>。</p>
+<p><code>seq2seq_f()</code>  直接呼叫了 <code>tf.contrib.legacy_seq2seq.embedding_attention_seq2seq()</code>。這個 embedding_attention_seq2seq 是一個帶有 embedding + sequence to sequence 並帶有 attention 機制的模型。encoder_input 首先進入一個 embedding layer，轉為 word vector，之後進入一個 encoder RNN。這個 encoder RNN 的每一個 time step 會被記錄下來，作為 attention 機制的參考。接下來，decoder_input 會進入另一個新建立的 embedding layer，在同樣轉為 word vector 之後，進入一個 attention deocder RNN。這個 deocder 是由 encoder 的最後一個 time step 的 state 進行初始化，其後每一個輸入就是 decoder_input 經過 embedding 之後的 word vector，並且具有對 encoder output 專注的 attention 機制。</p>
+<p>在 <code>tf.contrib.legacy_seq2seq.embedding_attention_seq2seq()</code> 之中的參數 <code>feed_previous</code>，當他為 False 的時候 decoder 會使用前面給的 decoer_input 作為輸入，也就是一般在訓練階段的作法。當值為 True 的時候，前面給的 decoder_input 只有第一個值（通常是 GO symbol，代表一個句子的開始） 會作為 decoder 的輸入，而 decoder 的下一個 input，則是 decoder 的前一個 output，也就是只給 deocder 第一個 input，後面讓他自由發揮的意思。這也是一般在 decode/predict 時候的作法。<a href="https://www.tensorflow.org/api_docs/python/tf/contrib/legacy_seq2seq/embedding_attention_seq2seq" target="_blank" rel="external">官方文件</a>。</p>
+<p>以上是這些程式碼比較核心的部分，後面大概就是利用<code>tf.train.GradientDescentOptimizer</code>進行訓練，clip gradient 並 print 一些 epoch、loss、perplexity 等資訊。</p>
+<h4 id="perplexity"><a href="#perplexity" class="headerlink" title="perplexity"></a>perplexity</h4><p>最後面簡單介紹一下 perplexity，這個指標就如同 precision recall 等指標一樣，用來評估一個模型的好壞，只不過在語言模型裡面，我們使用 perplexity 這個指標。perplexity 越小，代表模型的校能越好。<code>translate.py</code>之中對於 perplexity 的定義是：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><div class="line">perplexity = math.exp(float(loss)) <span class="keyword">if</span> loss &lt; <span class="number">300</span> <span class="keyword">else</span> float(<span class="string">"inf"</span>)</div></pre></td></tr></table></figure>
+<p>而數學定義：<br>$$perplexity=e^{l}, l=\frac{1}{M}\sum_{i=1}^{m}\log\left(p(s_i) \right )$$<br>正是<code>math.exp(float(loss))</code>。</p>
+<hr>
+<p>[1] <a href="http://arxiv.org/abs/1406.1078" target="_blank" rel="external">Learning Phrase Representations using RNN Encoder-Decoder for Statistical Machine Translation</a><br>[2] <a href="http://arxiv.org/abs/1409.3215" target="_blank" rel="external">Sequence to Sequence Learning with Neural Networks</a><br>[3] <a href="http://arxiv.org/abs/1409.0473" target="_blank" rel="external">Neural Machine Translation by Jointly Learning to Align and Translate</a><br>[4] <a href="http://arxiv.org/abs/1412.2007" target="_blank" rel="external">On Using Very Large Target Vocabulary for Neural Machine Translation</a>  </p>
+
+
+                <hr>
+
+                
+
+                <ul class="pager">
+                    
+                    
+                        <li class="next">
+                            <a href="/2016/09/26/using-git-lfs/" data-toggle="tooltip" data-placement="top" title="使用 git LFS 管理 github 上的大型檔案">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                
+
+                
+                <!-- disqus 评论框 start -->
+                <div class="comment">
+                    <div id="disqus_thread" class="disqus-thread"></div>
+                </div>
+                <!-- disqus 评论框 end -->
+                
+
+            </div>
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#自然語言處理" title="自然語言處理">自然語言處理</a>
+                        
+                          <a class="tag" href="/tags/#深度學習" title="深度學習">深度學習</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+            </div>
+
+        </div>
+    </div>
+</article>
+
+
+
+
+<!-- disqus 公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = "cyrusblog";
+    var disqus_identifier = "http://cyruschiu.github.io/2017/02/24/learning-Tensoflow-Seq2Seq-for-translate/";
+    var disqus_url = "http://cyruschiu.github.io/2017/02/24/learning-Tensoflow-Seq2Seq-for-translate/";
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<!-- disqus 公共JS代码 end -->
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("http://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: ''
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/cyrus.chiu1">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/CyrusChiu">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; Cyrus&#39;s Blog 2017 
+                    <br>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://cyruschiu.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("http://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-80209721-1';
+    var _gaDomain = 'cyruschiu.github.io';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- Side Catalog -->
+
+
+
+
+
+<!-- Image to hack wechat -->
+<img src="http://cyruschiu.github.io/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work --><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+
+</body>
+
+</html>

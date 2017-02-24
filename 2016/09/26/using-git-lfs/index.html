@@ -193,51 +193,51 @@
 </ul>
 <p>一個 machine learning 的專案難免會有些比較大的 model 檔案，但是 github 無法幫我們管理超過 100MB 的檔案，這時候我們必須另外找空間存放這些大型檔案。如果後續要在另外一台機器 clone 這一個 repo 下來執行的時候，也要去另外的空間把大型檔案都抓回來才有辦法開始執行，相當麻煩</p>
 <p><a href="https://git-lfs.github.com/" target="_blank" rel="external">Git Large File Storage</a> 可以幫我們解決這個問題。我們可以使用 git lfs 在同一個 repo 底下新增大型檔案，並對該檔案作版本控制，目前免費的流量是 1GB / month，用了這個之後就不會再看到檔案過大的錯誤訊息了</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">remote: warning: Large files detected.</div><div class="line">remote: error: File large_file is 123.00 MB; this exceeds GitHub&apos;s file size limit of 100 MB</div></pre></td></tr></table></figure>
-<h3 id="安裝-git-LFS"><a href="#安裝-git-LFS" class="headerlink" title="安裝 git LFS"></a>安裝 git LFS</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">$ curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash</div><div class="line">$ sudo apt-get install git-lfs</div><div class="line">$ git lfs install</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">remote: warning: Large files detected.</div><div class="line">remote: error: File large_file is 123.00 MB; this exceeds GitHub&apos;s file size limit of 100 MB</div></pre></td></tr></table></figure>
+<h3 id="安裝-git-LFS"><a href="#安裝-git-LFS" class="headerlink" title="安裝 git LFS"></a>安裝 git LFS</h3><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">$ curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash</div><div class="line">$ sudo apt-get install git-lfs</div><div class="line">$ git lfs install</div></pre></td></tr></table></figure>
 <h3 id="在-repo-裡面新增一個大型檔案"><a href="#在-repo-裡面新增一個大型檔案" class="headerlink" title="在 repo 裡面新增一個大型檔案"></a>在 repo 裡面新增一個大型檔案</h3><ol>
 <li><p>我們創建一個練習用的 repo<br><img src="create_repo1.png" alt="create repo" title="create repo"></p>
 </li>
 <li><p>將這個 repo clone 回 localhost 上</p>
 </li>
 <li><p>新增 README，並 commit</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">$ echo Hello World &gt; README.md</div><div class="line">$ git add README.md</div><div class="line">$ git commit -m &quot;Initial commit&quot;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">$ echo Hello World &gt; README.md</div><div class="line">$ git add README.md</div><div class="line">$ git commit -m &quot;Initial commit&quot;</div></pre></td></tr></table></figure>
 </li>
 <li><p>在資料夾底下新增檔案</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">$ echo hello a &gt; a.txt</div><div class="line">$ echo hello b &gt; b.txt</div><div class="line">$ git add a.txt b.txt</div><div class="line">$ git commit -m &quot;added txt file&quot;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">$ echo hello a &gt; a.txt</div><div class="line">$ echo hello b &gt; b.txt</div><div class="line">$ git add a.txt b.txt</div><div class="line">$ git commit -m &quot;added txt file&quot;</div></pre></td></tr></table></figure>
 <p>這樣的動作會新增兩個內容分別是 <code>hello a</code> 的 <code>a.txt</code>，以及內容是 <code>hello b</code> 的 <code>b.txt</code></p>
 </li>
 <li><p>新增一個 .bin 檔案，模擬大型檔案</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ echo this is a large file &gt; cat.bin</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">$ echo this is a large file &gt; cat.bin</div></pre></td></tr></table></figure>
 </li>
 <li><p>開始用 git 管理上面新增的 3 個檔案，要注意的是這邊跟的是檔名<code>cat.bin</code> 而非路徑<code>./cat.bin</code></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ git lfs track &apos;cat.bin&apos;</div><div class="line">&gt;&gt;&gt; Tracking cat.bin</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">$ git lfs track &apos;cat.bin&apos;</div><div class="line">&gt;&gt;&gt; Tracking cat.bin</div></pre></td></tr></table></figure>
 <p>直接下不帶參數的指令可以看到目前所有 tracked 的大型檔案</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">$ git lfs track</div><div class="line">&gt;&gt;&gt; Listing tracked paths</div><div class="line">    cat.bin (.gitattributes)</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">$ git lfs track</div><div class="line">&gt;&gt;&gt; Listing tracked paths</div><div class="line">    cat.bin (.gitattributes)</div></pre></td></tr></table></figure>
 </li>
 <li><p>管理 <code>.gitattributes</code> 檔案與 <code>cat.bin</code></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">$ git add .gitattributes</div><div class="line">$ git add cat.bin</div><div class="line">$ git commit -m &quot;added cat.bin&quot;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">$ git add .gitattributes</div><div class="line">$ git add cat.bin</div><div class="line">$ git commit -m &quot;added cat.bin&quot;</div></pre></td></tr></table></figure>
 </li>
 <li><p>查看狀態與 push</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">$ git lfs ls-files</div><div class="line">&gt;&gt;&gt; f4ddae8469 * cat.bin</div><div class="line">$ git push</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">$ git lfs ls-files</div><div class="line">&gt;&gt;&gt; f4ddae8469 * cat.bin</div><div class="line">$ git push</div></pre></td></tr></table></figure>
 <p>可以看到<code>cat.bin</code> 是以 LFS 的格式儲存<br><img src="store_with_lfs2.png" alt="file type" title="file type"></p>
 <p>並且所有的檔案都已經 push 上去了<br><img src="first_commit3.png" alt="commit1"></p>
 </li>
 </ol>
 <hr>
 <h3 id="修改檔案內容"><a href="#修改檔案內容" class="headerlink" title="修改檔案內容"></a>修改檔案內容</h3><p>這邊我們把<code>cat.bin</code> 的內容從</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">this is a large file</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">this is a large file</div></pre></td></tr></table></figure>
 <p>變成</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">this is a large file</div><div class="line">this is a large file</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">this is a large file</div><div class="line">this is a large file</div></pre></td></tr></table></figure>
 <p>執行下列指令：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">$ git tag one</div><div class="line">$ echo this is a large file &gt;&gt; cat.bin</div><div class="line">$ git add .gitattributes</div><div class="line">$ git add cat.bin</div><div class="line">$ git commit -m &quot;updated cat.bin&quot;</div><div class="line">$ git lfs ls-files</div><div class="line">&gt;&gt;&gt; bfa3dd54e6 * cat.bin</div><div class="line">$ git push</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">$ git tag one</div><div class="line">$ echo this is a large file &gt;&gt; cat.bin</div><div class="line">$ git add .gitattributes</div><div class="line">$ git add cat.bin</div><div class="line">$ git commit -m &quot;updated cat.bin&quot;</div><div class="line">$ git lfs ls-files</div><div class="line">&gt;&gt;&gt; bfa3dd54e6 * cat.bin</div><div class="line">$ git push</div></pre></td></tr></table></figure>
 <p>執行完成可以看到 <code>cat.bin</code> 已經被修改過了<br><img src="second_commit4.png" alt="commit2"><br>以及 <code>cat.bin</code> 的修改歷程<br><img src="history5.png" alt="history"></p>
 <hr>
 <h3 id="檔案的新增與刪除"><a href="#檔案的新增與刪除" class="headerlink" title="檔案的新增與刪除"></a>檔案的新增與刪除</h3><p>現在刪除<code>cat.bin</code> 並新增 <code>dog.bin</code> </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">$ git rm cat.bin</div><div class="line">&gt;&gt;&gt; rm &apos;cat.bin&apos;</div><div class="line">$ git rm .gitattributes</div><div class="line">&gt;&gt;&gt; rm &apos;.gitattributes&apos;</div><div class="line">$ git commit -m &quot;removed cat.bin&quot;</div><div class="line">$ git push</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">$ git rm cat.bin</div><div class="line">&gt;&gt;&gt; rm &apos;cat.bin&apos;</div><div class="line">$ git rm .gitattributes</div><div class="line">&gt;&gt;&gt; rm &apos;.gitattributes&apos;</div><div class="line">$ git commit -m &quot;removed cat.bin&quot;</div><div class="line">$ git push</div></pre></td></tr></table></figure>
 <p>下圖是執行完後的結果，<code>cat.bin</code>已被刪除<br><img src="remove6.png" alt="result"></p>
 <p>新增 <code>dog.bin</code></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">$ echo this is another large file &gt; dog.bin</div><div class="line">$ git lfs track &apos;dog.bin&apos;</div><div class="line">&gt;&gt;&gt; Tracking dog.bin</div><div class="line">$ git add .gitattributes</div><div class="line">$ git add dog.bin</div><div class="line">$ git commit -m &quot;added dog.bin&quot;</div><div class="line">$ git push</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">$ echo this is another large file &gt; dog.bin</div><div class="line">$ git lfs track &apos;dog.bin&apos;</div><div class="line">&gt;&gt;&gt; Tracking dog.bin</div><div class="line">$ git add .gitattributes</div><div class="line">$ git add dog.bin</div><div class="line">$ git commit -m &quot;added dog.bin&quot;</div><div class="line">$ git push</div></pre></td></tr></table></figure>
 <p>結果如圖<br><img src="added_dogbin7.png" alt="final"></p>
 <hr>
 <p>基本功能介紹的差不多了，有興趣的話可以到 <a href="https://github.com/github/git-lfs/wiki/Tutorial" target="_blank" rel="external">官方Tutorial</a>  看個仔細，或是看看別人寫的一些 <a href="https://shuhrat.github.io/programming/git-lfs-tips-and-tricks.html" target="_blank" rel="external">tips</a></p>
@@ -248,6 +248,10 @@
                 
 
                 <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/2017/02/24/learning-Tensoflow-Seq2Seq-for-translate/" data-toggle="tooltip" data-placement="top" title="learning-Tensoflow-Seq2Seq-for-translate">&larr; Previous Post</a>
+                        </li>
                     
                     
                         <li class="next">

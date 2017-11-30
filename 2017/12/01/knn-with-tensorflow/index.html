@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+          k Nearest Neighbor classifier (kNN) 的 tensorflow 實作 - Cyrus&#39; Blog
+        
+    </title>
+
+    <link rel="canonical" href="http://cyruschiu.github.io/2017/12/01/knn-with-tensorflow/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    <!-- Pygments Github CSS -->
+    <link rel="stylesheet" href="/css/syntax.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="http://cdn.staticfile.org/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- hexo-inject:begin --><!-- hexo-inject:end --><!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Cyrus&#39;s Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    
+<!-- Image to hack wechat -->
+<!-- <img src="http://cyruschiu.github.io/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="{{ site.baseurl }}/{% if page.header-img %}{{ page.header-img }}{% else %}{{ site.header-img }}{% endif %}" width="0" height="0"> -->
+
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/home-bg.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                          <a class="tag" href="/tags/#機器學習" title="機器學習">機器學習</a>
+                        
+                    </div>
+                    <h1>k Nearest Neighbor classifier (kNN) 的 tensorflow 實作</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by Cyrus Chiu on
+                        2017-12-01
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <h1 id="k-Nearest-Neighbor-classifier-kNN-的-tensorflow-實作"><a href="#k-Nearest-Neighbor-classifier-kNN-的-tensorflow-實作" class="headerlink" title="k Nearest Neighbor classifier (kNN) 的 tensorflow 實作"></a>k Nearest Neighbor classifier (kNN) 的 tensorflow 實作</h1><p>這篇文章會提到：</p>
+<ul>
+<li>使用 tensorflow 實作 kNN 演算法</li>
+<li>numpy 與 tensorflow 在常見 distance metric 的實作方法比較</li>
+<li>基於 tensorflow v1.4.0 撰寫</li>
+</ul>
+<p>最近有個專案使用了 scikit-learn 的 kNN 演算法，但由於要預測的資料量有上億筆，並且需要週期性的不斷更新結果，就興起了拿 GPU 加速運算的念頭，於是便用 tensorflow 寫了一套操作方式與 scikit-learn 雷同的 kNN 演算法模組。</p>
+<p>在網路上 google 一下其實不難找到一些使用 tensorflow 實作 kNN 的範例，但大多都是簡單的實現，我認為缺乏以下兩個功能：</p>
+<ol>
+<li>一次只能計算一筆資料：GPU memory 明明就裝的下更多資料，一次只計算一筆實在太浪費了！</li>
+<li>用的 distance metric 是寫死的：scikit-learn 的 kNN 允許使用不同的 metric 來做為 kNN 中距離的度量，常見的 L2 distance 有時不見得是最適合的。</li>
+</ol>
+<p>這次就針對以上兩點來做些改善。</p>
+<p>kNN 演算法的概念基本上就是尋找與目標資料點<strong>最接近</strong>的 k 個鄰居，並統計這 k 個鄰居中大部分屬於哪一類型，就把目標資料點歸類為該類型的人。有了這個概念，很快就可以實作出來。</p>
+<h3 id="Distance-Function"><a href="#Distance-Function" class="headerlink" title="Distance Function"></a>Distance Function</h3><p>上面談到<strong>最接近</strong>，如何定義最接近，便要先定義<strong>距離</strong>。下面就先把常見的三種 distance metric 實現出來。</p>
+<h4 id="Manhattan-distances（L1-distances）"><a href="#Manhattan-distances（L1-distances）" class="headerlink" title="Manhattan distances（L1 distances）"></a>Manhattan distances（L1 distances）</h4><p>$$\sum_{i=1}^{n}\left | \vec{x_i} - \vec{y_i} \right |$$</p>
+<p>最基本的實現就是向量 $\vec{x_1}$ 與 $\vec{x_2}$ 的直接運算：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>x1 = np.array([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>])</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>x2 = np.array([<span class="number">1</span>, <span class="number">0</span>, <span class="number">1</span>])</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>sum(abs(x1-x2))</div><div class="line"></div><div class="line"><span class="number">4</span></div></pre></td></tr></table></figure>
+<p>如果今天希望是<strong>矩陣對矩陣</strong>的運算，例如 training set 中有 ${ \vec{x_1}, \vec{x_2}, \vec{x_3} }$ 三筆資料，test set 中有 $ { \vec{x_4}, \vec{x_5} }$ 兩筆資料，我們希望一次回傳 $\vec{x_4}, \vec{x_5}$ 對於 training set 中三筆資料的所有距離，可以透過操作 numpy array 的維度來實現：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>X_train = np.array([[<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>], [<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>], [<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>]]) <span class="comment">#x1, x2, x_3</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>x_test = np.array([[<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>], [<span class="number">3</span>,<span class="number">0</span>,<span class="number">2</span>]]) <span class="comment">#x4, x5</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>abs(X_train - x_test[:, <span class="keyword">None</span>]).sum(axis=<span class="number">2</span>)</div><div class="line"></div><div class="line">array([[ <span class="number">4</span>,  <span class="number">7</span>, <span class="number">10</span>],  <span class="comment"># x4 對於 x1, x2, x3 的距離</span></div><div class="line">       [ <span class="number">5</span>,  <span class="number">6</span>,  <span class="number">7</span>]])</div></pre></td></tr></table></figure>
+<p>tensorflow 也支援維度的操作，我們可以改寫如下，可以看出來基本上是和 numpy 一模一樣的操作：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>l1 = tf.reduce_sum(</div><div class="line">	       tf.abs(tf.subtract(</div><div class="line">		  X_train, tf.expand_dims(x_test, <span class="number">1</span>))), axis=<span class="number">2</span>) </div><div class="line"><span class="meta">&gt;&gt;&gt; </span>tf.Session().run(l1)</div><div class="line"></div><div class="line">array([[ <span class="number">4</span>,  <span class="number">7</span>, <span class="number">10</span>],</div><div class="line">       [ <span class="number">5</span>,  <span class="number">6</span>,  <span class="number">7</span>]])</div></pre></td></tr></table></figure>
+<h4 id="Euclidean-distances-L2-distances"><a href="#Euclidean-distances-L2-distances" class="headerlink" title="Euclidean distances (L2 distances)"></a>Euclidean distances (L2 distances)</h4><p>$$\sqrt{\sum_{i=1}^{n}\left ( \vec{x_i} - \vec{y_i}  \right )^2}$$</p>
+<p>這便是最常見的歐式距離 – 平方開根號。這部份在 numpy 已經有很完善的資源。</p>
+<p>向量對向量的版本：<br><figure class="highlight python"><table><tr><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> numpy.linalg <span class="keyword">import</span> norm</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>x1 = np.array([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>])</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>x2 = np.array([<span class="number">1</span>, <span class="number">0</span>, <span class="number">1</span>])</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>norm(x1 - x2)</div><div class="line"></div><div class="line"><span class="number">2.8284271247461903</span></div></pre></td></tr></table></figure></p>
+<p>矩陣版本（同樣我們需要先擴充維度）：<br><figure class="highlight python"><table><tr><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>X_train = np.array([[<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>], [<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>], [<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>]], dtype=<span class="string">'f'</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>x_test = np.array([[<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>], [<span class="number">3</span>,<span class="number">0</span>,<span class="number">2</span>]], dtype=<span class="string">'f'</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>XX = X_train - x_test[:, <span class="keyword">None</span>]</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>norm(XX , axis=<span class="number">2</span>)</div><div class="line"></div><div class="line">array([[ <span class="number">2.82842708</span>,  <span class="number">4.35889912</span>,  <span class="number">6.</span>        ],</div><div class="line">       [ <span class="number">3.</span>        ,  <span class="number">3.7416575</span> ,  <span class="number">5.</span>        ]], dtype=float32)</div></pre></td></tr></table></figure></p>
+<p>tensorflow 中也已經有 api 可以使用，不過在這邊可以看到有一些浮點數精度的問題：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>tf.norm(tf.subtract(X_train, tf.expand_dims(x_test, <span class="number">1</span>)), axis=<span class="number">2</span>) </div><div class="line"></div><div class="line">array([[ <span class="number">2.82842684</span>,  <span class="number">4.35889864</span>,  <span class="number">5.99999952</span>],</div><div class="line">       [ <span class="number">2.99999976</span>,  <span class="number">3.7416575</span> ,  <span class="number">5.</span>        ]], dtype=float32)</div></pre></td></tr></table></figure>
+<h4 id="Cosine-distances"><a href="#Cosine-distances" class="headerlink" title="Cosine distances"></a>Cosine distances</h4><p>$$similarity=\frac{\vec{x}\cdot \vec{y}}{\left | \vec{x} \right |\left | \vec{y} \right |}$$<br>$$distacne=1-similarity$$</p>
+<p>向量對向量的版本，很容易可以寫出來，並且 sklearn 裡面也有直接計算 cosine similarity 的函數可以呼叫，下面我們都只計算到 similarity，改為 distance 只要拿 1 去減就可以 ：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> numpy.linalg <span class="keyword">import</span> norm</div><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> numpy <span class="keyword">import</span> dot</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>x1 = np.array([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>])</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>x2 = np.array([<span class="number">1</span>, <span class="number">0</span>, <span class="number">1</span>])</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>dot(a, b) / norm(x1) * norm(x2)</div><div class="line"></div><div class="line"><span class="number">0.7559289460184544</span></div><div class="line"></div><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> sklearn.metrics.pairwise <span class="keyword">import</span> cosine_similarity</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>cosine_similarity(x1, x2)</div><div class="line"></div><div class="line">array([[ <span class="number">0.75592895</span>]])</div></pre></td></tr></table></figure>
+<p>矩陣版本：<br><figure class="highlight python"><table><tr><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>X_train = np.array([[<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>], [<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>], [<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>]], dtype=<span class="string">'f'</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>x_test = np.array([[<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>], [<span class="number">3</span>,<span class="number">0</span>,<span class="number">2</span>]], dtype=<span class="string">'f'</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>cosine_similarity(X_train, x_test)</div><div class="line"></div><div class="line">array([[ <span class="number">0.75592887</span>,  <span class="number">0.66712439</span>],</div><div class="line">       [ <span class="number">0.78783858</span>,  <span class="number">0.72103667</span>],</div><div class="line">       [ <span class="number">0.80000001</span>,  <span class="number">0.74524128</span>]], dtype=float32)</div></pre></td></tr></table></figure></p>
+<p>tensorflow 其實也是相對應的操作：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>X_norm = tf.sqrt(tf.reduce_sum(tf.square(X_train), axis=<span class="number">1</span>)) <span class="comment"># 平方, 相加, 開根號</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>Y_norm = tf.sqrt(tf.reduce_sum(tf.square(x_test), axis=<span class="number">1</span>))</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>XY_norm = tf.multiply(X_norm, tf.expand_dims(Y_norm, <span class="number">1</span>))</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>XY = tf.reduce_sum(tf.multiply(X_train, x_test[:,<span class="keyword">None</span>]), <span class="number">2</span>) <span class="comment"># 內積</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>similarity = XY / XY_norm</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>tf.Session().run(similarity)</div><div class="line"></div><div class="line">array([[ <span class="number">0.75592899</span>,  <span class="number">0.78783864</span>,  <span class="number">0.80000001</span>],</div><div class="line">       [ <span class="number">0.66712439</span>,  <span class="number">0.72103673</span>,  <span class="number">0.74524128</span>]], dtype=float32)</div></pre></td></tr></table></figure>
+<h3 id="kNN-實作"><a href="#kNN-實作" class="headerlink" title="kNN 實作"></a>kNN 實作</h3><p>kNN 的演算法本體其實很簡單，這邊先給出比較直觀的程式碼：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">kNN</span><span class="params">(x_train, y_train, x_test, k)</span>:</span></div><div class="line">    <span class="comment"># 這邊就是上面定義的 l2 distance</span></div><div class="line">    distance= tf.norm(tf.subtract(x_train, tf.expand_dims(x_test, <span class="number">1</span>)), axis=<span class="number">2</span>) </div><div class="line"></div><div class="line">	<span class="comment"># 在算出來的 distance 裡面，找出 k 個最近的，回傳 index 與 value</span></div><div class="line">    <span class="comment"># tf.nn.top_k 預設回傳排序為大到小，加上 negative 可以逆序排列 </span></div><div class="line">    top_k_xvals, top_k_indices = tf.nn.top_k(tf.negative(distance), k=k)</div><div class="line">    </div><div class="line">    <span class="comment"># 根據回傳的 index，到 y_train 找出對應的 target value</span></div><div class="line">    prediction_indices = tf.gather(y_train, top_k_indices)</div><div class="line"></div><div class="line">	<span class="comment"># 回傳的是 1-hot 的 target vector，這邊將他改為整數</span></div><div class="line">    count_of_predictions = tf.reduce_sum(prediction_indices, axis=<span class="number">1</span>)</div><div class="line">    </div><div class="line">    <span class="comment"># 投票結果</span></div><div class="line">    prediction = tf.argmax(count_of_predictions, axis=<span class="number">1</span>)</div><div class="line">    </div><div class="line">    <span class="comment"># 機率</span></div><div class="line">    proba = tf.div(count_of_predictions, k)</div><div class="line">    <span class="keyword">return</span> prediction</div></pre></td></tr></table></figure>
+<p>scikit-learn 的 kNN 提供了計算機率的 method，<code>predict_proba()</code>，在看了原始碼之後，發現到 scikit-learn kNN 指的機率，其實就是投票數結果的比例。例如，有一筆資料取 k=5 的預測結果如下：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">array([0, 0, 1, 1, 2, 1, 0])</div></pre></td></tr></table></figure>
+<p>這代表這筆資料在上述的 7 個類別底下的投票結果為：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">類別 0：0 票</div><div class="line">類別 1：0 票</div><div class="line">類別 2：1 票</div><div class="line">類別 3：1 票</div><div class="line">類別 4：2 票</div><div class="line">類別 5：1 票</div><div class="line">類別 6：0 票</div></pre></td></tr></table></figure>
+<p>因此，計算機率後的結果就是：</p>
+<p>$$<br>\begin{equation}<br>  \mathcal{P(x)} =<br>  \begin{cases}<br>    0.2 &amp; \text{if $x=2,3,5$} \<br>    0.4 &amp; \text{if $x=4$} \<br>    0 &amp; \text{otherwise}<br>  \end{cases}<br>\end{equation}<br>$$</p>
+<h3 id="模組化"><a href="#模組化" class="headerlink" title="模組化"></a>模組化</h3><p>最後，我們將程式碼整理成一個模組，這個模組使用 tensorflow 計算 kNN，支援 GPU 處理、自定義 distance function、支援批次計算，並且操作方式與 scikit-learn 如出一轍。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> tf_knn <span class="keyword">import</span> KNeighborsClassifier</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>X = np.array([[<span class="number">0</span>], [<span class="number">1</span>], [<span class="number">2</span>], [<span class="number">3</span>]])</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>y = [<span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">1</span>]</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>neigh = KNeighborsClassifier(n_neighbors=<span class="number">3</span>)</div><div class="line"></div><div class="line">&#123;<span class="string">'n_neighbors'</span>: <span class="number">3</span>, <span class="string">'metric'</span>: <span class="string">'euclidean'</span>, <span class="string">'batch_size'</span>: <span class="number">128</span>&#125;</div><div class="line"></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>neigh.fit(X, y) </div><div class="line"><span class="meta">&gt;&gt;&gt; </span>print(neigh.predict(np.array([[<span class="number">1.1</span>]])))</div><div class="line"></div><div class="line">[<span class="number">0</span>]</div><div class="line"></div><div class="line"></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>print(neigh.predict_proba(np.array([[<span class="number">0.9</span>]])))</div><div class="line"></div><div class="line">[[ <span class="number">0.66666667</span>  <span class="number">0.33333333</span>]]</div></pre></td></tr></table></figure>
+<p>模組化的完整程式碼請參照我的 github repo：<a href="https://github.com/CyrusChiu/TensorFlow-kNN" target="_blank" rel="external">https://github.com/CyrusChiu/TensorFlow-kNN</a></p>
+
+
+                <hr>
+
+                
+
+                <ul class="pager">
+                    
+                    
+                        <li class="next">
+                            <a href="/2017/09/17/development-of-pixbot-2/" data-toggle="tooltip" data-placement="top" title="PIXNET HACKATHON chatbot 製作過程：（二）pixbot 學說話">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                
+
+                
+                <!-- disqus 评论框 start -->
+                <div class="comment">
+                    <div id="disqus_thread" class="disqus-thread"></div>
+                </div>
+                <!-- disqus 评论框 end -->
+                
+
+            </div>
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#機器學習" title="機器學習">機器學習</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+            </div>
+
+        </div>
+    </div>
+</article>
+
+
+
+
+<!-- disqus 公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = "cyrusblog";
+    var disqus_identifier = "http://cyruschiu.github.io/2017/12/01/knn-with-tensorflow/";
+    var disqus_url = "http://cyruschiu.github.io/2017/12/01/knn-with-tensorflow/";
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<!-- disqus 公共JS代码 end -->
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("http://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: ''
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://www.facebook.com/cyrus.chiu1">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/CyrusChiu">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; Cyrus&#39;s Blog 2017 
+                    <br>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://cyruschiu.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("http://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-80209721-1';
+    var _gaDomain = 'cyruschiu.github.io';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- Side Catalog -->
+
+
+
+
+
+<!-- Image to hack wechat -->
+<img src="http://cyruschiu.github.io/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work --><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config("");
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="custom_mathjax_source">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+
+</body>
+
+</html>
